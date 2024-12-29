@@ -2,7 +2,7 @@ NTP time synchronization for Raspberry Pi Pico W
 
 Example output:
 ```
-Found known SSID: U_veverek_2,4
+Found known SSID: U_veverek
 Connecting: ........
 Connected successfully.
 Synchronizing time via NTP ...

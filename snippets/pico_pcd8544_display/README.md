@@ -1,5 +1,5 @@
 Date: 2024-03-18
 
-Extract fonts for OTB file format and likely others using freetype library.
+First tests of PCD8544 aka Nokia 5510 (3310 as well?) display.
 More in [Raspberry Pi Pico, MicroPython, and Nokia 5110 display](https://www.pavelp.cz/posts/eng-raspberry-pico-nokia-display/) blog post.
 

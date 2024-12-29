@@ -1,0 +1,2 @@
+{"station_id": "pico_station_01", "timestamp": 1681455421, "temperature": 22.5, "pressure": 1013.25, "humidity": 45.5}
+{"station_id": "sta01", "temperature": -12.34, "pressure": 101325.0, "humidity": 43.21}

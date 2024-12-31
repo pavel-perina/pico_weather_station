@@ -7,9 +7,14 @@ from weather_calculations import get_derived_data
 import logging
 import sys
 
-app = Flask(__name__)
+#########################################################################################################
+#   ____             __ _                       _   _             
+#  / ___|___  _ __  / _(_) __ _ _   _ _ __ __ _| |_(_) ___  _ __  
+# | |   / _ \| '_ \| |_| |/ _` | | | | '__/ _` | __| |/ _ \| '_ \ 
+# | |__| (_) | | | |  _| | (_| | |_| | | | (_| | |_| | (_) | | | |
+#  \____\___/|_| |_|_| |_|\__, |\__,_|_|  \__,_|\__|_|\___/|_| |_|
+#                         |___/                                   
 
-# Configuration ==============================================
 LOG_FILE = "server_log.txt"
 
 class Station():
@@ -17,7 +22,6 @@ class Station():
         self.id       = id
         self.altitude = altitude
         self.outdoor  = outdoor
-
 
 stations = [ Station("sta01", 250.0, False)]
 station_dict = {station.id: station for station in stations}
@@ -54,7 +58,16 @@ def createLogger() -> logging.Logger:
 
 logger = createLogger()
 
-       
+#########################################################################################################
+#  ____                                              _   
+# / ___|  ___ _ ____   _____ _ __   _ __   __ _ _ __| |_ 
+# \___ \ / _ \ '__\ \ / / _ \ '__| | '_ \ / _` | '__| __|
+#  ___) |  __/ |   \ V /  __/ |    | |_) | (_| | |  | |_ 
+# |____/ \___|_|    \_/ \___|_|    | .__/ \__,_|_|   \__|
+#                                  |_|                   
+
+app = Flask(__name__)
+        
 # Endpoint to receive and process data
 @app.route('/upload', methods=['POST'])
 def upload_data():

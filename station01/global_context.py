@@ -20,7 +20,7 @@ class GlobalContext:
         self.key_left_pressed = False
         self.key_right_pressed = False
         self.fb_width  = 84
-        self.fb_height = 44
+        self.fb_height = 48
         self.framebuffer =  bytearray([0xAA] * (self.fb_width * self.fb_height // 8))
         self.framebuffer_dirty = False
         self.app = "SCREEN_MAIN"

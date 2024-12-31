@@ -4,12 +4,13 @@ from flask import Flask, request, jsonify
 import json
 from datetime import datetime, timezone
 from weather_calculations import get_derived_data
+import logging
+import sys
 
 app = Flask(__name__)
 
-
-# Configuration
-LOG_FILE = "data_log.txt"
+# Configuration ==============================================
+LOG_FILE = "server_log.txt"
 
 class Station():
     def __init__(self, id:str, altitude:float, outdoor:bool):
@@ -17,8 +18,42 @@ class Station():
         self.altitude = altitude
         self.outdoor  = outdoor
 
+
 stations = [ Station("sta01", 250.0, False)]
 station_dict = {station.id: station for station in stations}
+
+#########################################################################################################
+#  _                      _
+# | |    ___   __ _  __ _(_)_ __   __ _
+# | |   / _ \ / _` |/ _` | | '_ \ / _` |
+# | |__| (_) | (_| | (_| | | | | | (_| |
+# |_____\___/ \__, |\__, |_|_| |_|\__, |
+#             |___/ |___/         |___/
+
+def createLogger() -> logging.Logger:
+    """Create and initialize logger for this script"""
+    # Create a formatter with desired format (including timestamp and level)
+    formatter = logging.Formatter('%(asctime)-24s%(levelname)-8s: %(message)s')
+
+    # Create a file handler
+    file_handler = logging.FileHandler(LOG_FILE, encoding="UTF-8")
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(formatter)  # Set formatter for file handler
+
+    # Create a console handler
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(logging.DEBUG)
+    console_handler.setFormatter(formatter)  # Set formatter for console handler
+
+    # Add both handlers to the logger
+    logger = logging.getLogger("main")
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
+    return logger
+
+logger = createLogger()
+
        
 # Endpoint to receive and process data
 @app.route('/upload', methods=['POST'])
@@ -27,6 +62,7 @@ def upload_data():
         # Parse JSON data from the request
         data = request.get_json()
         if not data:
+            logger.error("Invalid or missing JSON")
             return jsonify({"status": "error", "message": "Invalid or missing JSON"}), 400
 
         # Add time of arrival
@@ -44,17 +80,19 @@ def upload_data():
             with open(f"log_{data["station_id"]}.txt", "a") as file:
                 file.write(json.dumps(data) + "\n")
                 
-            print(f"Received and logged data: {data}")
+            logger.info(f"Received and logged data: {data}")
             return jsonify({"status": "success"}), 200
         else:
-            print("Unknown station")
+            logger.error("Unknown station")
             return jsonify({"status": "error", "message": "Internal server error"}), 500
         
     except Exception as e:
-        print(f"Error processing data: {e}")
+        logger.error(f"Error processing data: {e}")
         return jsonify({"status": "error", "message": "Internal server error"}), 500
 
 # Run the server
 if __name__ == '__main__':
+    logger.info("Running server")
     app.run(host='0.0.0.0', port=5000)
+    logger.info("Stopping server")
 

@@ -80,11 +80,12 @@ def upload_data():
 
         # Add time of arrival
         toa = datetime.now(timezone.utc)
-        data["time_of_arrival"] = f"{toa.year}-{toa.month:02d}-{toa.day:02d}T{toa.hour:02d}:{toa:minute:02d}:{toa:second:02d}Z"
-
+        data["time_of_arrival"] = f"{toa.year}-{toa.month:02d}-{toa.day:02d}T{toa.hour:02d}:{toa.minute:02d}:{toa.second:02d}Z"
+        print(data)
         # Add additional data for known stations
         station = station_dict.get(data["station_id"])
         if (station):
+            print("known station")
             additional_data = get_derived_data(data["temperature"], data["humidity"], data["pressure"], station.altitude, station.outdoor)
             for key, value in additional_data:
                 data[key] = value

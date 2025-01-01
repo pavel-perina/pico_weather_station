@@ -23,7 +23,7 @@ class TemperatureSaturationLUT:
         self.pressures    = np.array([arden_buck(T) for T in self.temperatures])
 
     def lerp(x, x1, x2, y1, y2):
-        return y1 + (x - x1) * (y2 - y1) / (x2 - x1)    
+        return y1 + (x - x1) * (y2 - y1) / (x2 - x1)
 
     def temperature_to_index(self, temp:float):
         index = (temp - self.temp_begin) / self.temp_step
@@ -33,7 +33,7 @@ class TemperatureSaturationLUT:
         if (index > len(self.temperatures)):
             return None
         return index
-    
+
     def index_to_temperature(self, index:int):
         if (index < 0):
             return None
@@ -41,7 +41,7 @@ class TemperatureSaturationLUT:
             return None
         temperature = self.temp_begin + index * self.temp_step
         return temperature
-        
+
     def lookup_pressure(self, temp:float) -> float:
         index = self.temperature_to_index(temp)
         t0 = self.index_to_temperature(index)
@@ -49,7 +49,7 @@ class TemperatureSaturationLUT:
         p0 = self.pressures[index]
         p1 = self.pressures[index+1]
         return TemperatureSaturationLUT.lerp(temp, t0, t1, p0, p1)
-    
+
     def lookup_temperature(self, pressure:float) -> float:
         index = np.searchsorted(self.pressures, pressure)
         t0 = self.index_to_temperature(index-1)
@@ -60,13 +60,12 @@ class TemperatureSaturationLUT:
 
 lut_ts = TemperatureSaturationLUT()
 
-def get_sea_level_pressure(pressure, altitude, temperature_celsius = None, vapor_pressure = None):
+def get_sea_level_pressure(pressure, altitude, temperature_celsius = None, vapor_pressure = None, temperature_lapse = 0.0065):
     # Compensate for temperature lapse, this has minimal effect
-    temperature_lapse = 0.0065
     temperature = temperature_celsius
     if temperature is None:
         # Use international standard athmosphere - adjust 15C at sea level by altitude (gets colder upwards)
-        temperature = 15 - temperature_lapse * altitude * 0.5
+        temperature = 15.0 - temperature_lapse * altitude * 0.5
     else:
         # Adjust temperature at station level by altitude (gets warmer downwards)
         temperature = temperature + temperature_lapse * altitude * 0.5
@@ -77,9 +76,11 @@ def get_sea_level_pressure(pressure, altitude, temperature_celsius = None, vapor
     # Compensate for humidity
     if (vapor_pressure is not None):
         # Get virtual temperature (dry air has the same density as moist air at current temperature)
+        #print(f"TEMP: {temperature}")
         temperature = temperature / (1.0 - vapor_pressure / pressure * (1 - 0.622))
-
-    pressure = pressure * np.exp(9.80665 * 0.0289644 * altitude / (8.3144598 * temperature))
+        #print(f"Virtual temp {temperature}")
+    pressure = pressure * np.exp(9.80665 * 0.02896968 * altitude / (8.314462618 * temperature))
+    return pressure
 
 def mixing_ratio(total_pressure_pa, vapor_pressure_pa):
     """Calculate mixing ratio (dimensionless)"""
@@ -99,22 +100,23 @@ def get_derived_data(temperature_celsius:float, humidity:float, pressure:float, 
     e   = e_s * humidity * 0.01                       # Actual vapor pressure
     dp = lut_ts.lookup_temperature(e)                 # Dew point
     data = []
-    data.append( ("dew_point", dp) )
+    data.append(("dew_point", float(dp)))
 
     if is_outdoor_station:
         p0 = get_sea_level_pressure(pressure, altitude, temperature_celsius, e)
-        data.append( ("sea_level_pressure", p0) )
+        data.append(("sea_level_pressure", float(p0)))
     else:
         p0 = get_sea_level_pressure(pressure, altitude)
-        data.append( ("sea_level_pressure", p0) )
-    
+        data.append(("sea_level_pressure", float(p0)))
+
     sh = specific_humidity(pressure, e)
-    data.append( ("specific_humidity", sh) )
+    data.append( ("specific_humidity", float(sh)) )
 
     return data
 
 # Tests
 if __name__ == '__main__':
+    # Test relative humidity look up
     t  = 25.0
     rh = 60.0
 
@@ -126,3 +128,53 @@ if __name__ == '__main__':
     e2 = lut_ts.lookup_pressure(dp)
     print("LOOKUP: Saturated vapor pressure for {:.2f} °C is {:.2f} Pa".format(dp, e2))
     print("EVAL:   Saturated vapor pressure for {:.2f} °C is {:.2f} Pa".format(dp, arden_buck(dp)))
+
+    # Test on real data
+    # https://www.chmi.cz/aktualni-situace/aktualni-stav-pocasi/ceska-republika/stanice/profesionalni-stanice/prehled-stanic/brno-turany
+    # 2025-01-01 11:00
+    # -3.5C, 94% RH, 997.9hPa, 241m
+    # out: dew point: -4.3C, 1029.3hPa
+    t = -3.5
+    rh = 94.0
+    e_s = lut_ts.lookup_pressure(t)
+    print("LOOKUP: Saturated vapor pressure for {:.2f} °C is {:.2f} Pa".format(t, e_s))
+    e = e_s * rh * .01
+    dp = lut_ts.lookup_temperature(e)
+    print(f"Considering {rh:.1f}% RH, actual vapor pressure is {e:.2f} Pa, dew point is {dp:.2f} °C")
+
+    print("Expected result is 1029.3 hPA")
+    p = 99790
+    alt = 241.0
+    p0 = get_sea_level_pressure(p, alt)
+    print(f"Sea level pressure for 15C@0m, 0%RH: {p0} Pa")
+    p0 = get_sea_level_pressure(p, alt, t)
+    print(f"Compensated for temperature: {p0} Pa")
+    p0 = get_sea_level_pressure(p, alt, t, e)
+    print(f"... and humidity: {p0} Pa")
+    p0 = get_sea_level_pressure(p, alt, t, e, 0.0)
+    print(f"... and no lapse: {p0} Pa")
+
+# https://www.chmi.cz/aktualni-situace/aktualni-stav-pocasi/ceska-republika/stanice/profesionalni-stanice/prehled-stanic/namest-nad-oslavou
+
+    # 2025-01-01 11:00
+    # -4.6C, 94% RH, 968.9hPa, 474m
+    # out: dew point: -5.5C, 1028.8hPa
+    t = -4.6
+    rh = 94.0
+    e_s = lut_ts.lookup_pressure(t)
+    print("Expected result is 1028.8 hPA")
+    print("LOOKUP: Saturated vapor pressure for {:.2f} °C is {:.2f} Pa".format(t, e_s))
+    e = e_s * rh * .01
+    dp = lut_ts.lookup_temperature(e)
+    print(f"Considering {rh:.1f}% RH, actual vapor pressure is {e:.2f} Pa, dew point is {dp:.2f} °C")
+
+    p = 96890
+    alt = 474.0
+    p0 = get_sea_level_pressure(p, alt)
+    print(f"Sea level pressure for 15C@0m, 0%RH: {p0} Pa")
+    p0 = get_sea_level_pressure(p, alt, t)
+    print(f"Compensated for temperature: {p0} Pa")
+    p0 = get_sea_level_pressure(p, alt, t, e)
+    print(f"... and humidity: {p0} Pa")
+    p0 = get_sea_level_pressure(p, alt, t, e, 0.0)
+    print(f"... and no lapse: {p0} Pa")

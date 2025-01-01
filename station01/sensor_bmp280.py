@@ -49,7 +49,7 @@ class Bmp280Calibration:
 
     def decode_measurement(self, meas_data: bytes):
         hex_string = ' '.join(f'{byte:02x}' for byte in meas_data)
-        print("Raw measurement: "+hex_string)
+        #print("Raw measurement: "+hex_string)
         # Temperature
         temp_raw = decode_20bit(meas_data[3:6])
         var1 = ((temp_raw >> 3) - (self.T1 << 1)) * self.T2 >> 11

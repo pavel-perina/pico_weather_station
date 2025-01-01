@@ -12,7 +12,6 @@ class Display:
             self.lcd.position(0,0)
             self.lcd.data(ctx.framebuffer)
             ctx.framebuffer_dirty = False
-            print("FB up")
 
 
 

@@ -6,7 +6,7 @@ def fb_clear(ctx:GlobalContext):
     ctx.framebuffer =  bytearray(b'\x00' * len(ctx.framebuffer))
 
 def fb_write(ctx:GlobalContext, row:int, x:int, text:str):
-    print(text)
+    #print(text)
     dst_index = row * ctx.fb_width + x
     for ch in text:
         src_index = ord(ch)*6
@@ -33,6 +33,5 @@ class ScreenMain:
             fb_write(ctx, 3, 0, "BMP280:")
             fb_write(ctx, 4, 0, f"Temp: {ctx.bmp280_temperature:.2f}\xf8C")
             fb_write(ctx, 5, 0, f"{ctx.bmp280_pressure*0.01:.2f} hPa")
-            print("FB up")
             ctx.framebuffer_dirty = True
             self.last_update = ctx.ticks_ms

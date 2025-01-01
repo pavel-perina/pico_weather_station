@@ -24,6 +24,8 @@ class Sht40:
                 humidity    = (buffer[3] << 8) + buffer[4]
                 ctx.sht40_temperature = ((21875 * temperature) >> 13) - 45000
                 ctx.sht40_humidity    = ((15625 * humidity) >> 13) - 6000
+                ctx.sht40_temperature *= 0.001
+                ctx.sht40_humidity    *= 0.001
                 ctx.sht40_valid       = ((ctx.ticks_ms - self.last_baking) > 5*60*1000)
                 self.awaiting_data_since_ticks  = 0
                 self.last_update_ticks          = ctx.ticks_ms 

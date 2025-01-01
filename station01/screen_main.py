@@ -28,8 +28,8 @@ class ScreenMain:
         if (ctx.ticks_ms - self.last_update > 1000):
             fb_clear(ctx)
             fb_write(ctx, 0, 0, "SHT40:")
-            fb_write(ctx, 1, 0, f"Temp: {ctx.sht40_temperature*0.001:.2f}\xf8C")
-            fb_write(ctx, 2, 0, f"RH:   {ctx.sht40_humidity*0.001:.2f} %")
+            fb_write(ctx, 1, 0, f"Temp: {ctx.sht40_temperature:.2f}\xf8C")
+            fb_write(ctx, 2, 0, f"RH:   {ctx.sht40_humidity:.2f} %")
             fb_write(ctx, 3, 0, "BMP280:")
             fb_write(ctx, 4, 0, f"Temp: {ctx.bmp280_temperature:.2f}\xf8C")
             fb_write(ctx, 5, 0, f"{ctx.bmp280_pressure*0.01:.2f} hPa")

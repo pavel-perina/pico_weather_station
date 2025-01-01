@@ -3,10 +3,10 @@ class GlobalContext:
     """
     Global application context which stores various sensor data, event triggers...
     """
-    def __init__(self, i2c, spi):
+    def __init__(self, i2c, spi, ticks_ms:int):
         self.i2c = i2c
         self.spi = spi
-        self.ticks_ms = 0
+        self.ticks_ms = ticks_ms
         self.sht40_temperature = 0.0
         self.sht40_humidity = 0.0
         self.sht40_valid = False # Not baking or cooling

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"/>
+<head>
+  <title>Latest Station Data</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+  <body>
+
+    <table>
+      <tr class="station" colspan="2">
+        <td colspan="2">
+          <div style="display: flex; justify-content:space-between;">
+            <div>Station</div>
+            <div style="text-align:right;">{{ station_id }}</div>
+        </td>
+      </tr>
+      <tr class="time">
+        <td colspan="2">
+          <div style="display: flex; justify-content:space-between;">
+            <div>Time</div>
+            <div style="text-align:right;">{{ time }}</div>
+          </div>
+        </td>
+      </tr>
+      <tr><td>&nbsp;</td><td></td></tr>
+      <tr>
+        <td class="left">Temperature</td> 
+        <td class="right">{{ "{:.2f}".format(temperature) }} °C</td>
+      </tr>
+      <tr>
+        <td class="left">Dew point</td>
+        <td class="right">{{ "{:.2f}".format(dew_point) }} °C</td></tr>
+      <tr>
+        <td class="left">Relative humidity</td>
+        <td class="right">{{ humidity }} %</td>
+      </tr>
+      <tr>
+        <td class="left">Specific Humidity</td>
+        <td class="right">{{ "{:.1f}".format(specific_humidity*1000) }} g/kg</td></tr>
+      <tr>
+        <td class="left">Pressure reduced to sea level</td>
+        <td class="right">{{ "{:.1f}".format(sea_level_pressure*0.01) }} hPA</td></tr>
+      <tr>
+        <td class="left">Pressure at station</td>
+        <td class="right">{{ "{:.1f}".format(pressure*0.01) }} hPa</td>
+      </tr>
+    </table>
+  </body>
+</html>

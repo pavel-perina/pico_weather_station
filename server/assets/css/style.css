@@ -7,8 +7,8 @@ body {
 }
 
 tr.station {
-    font-weight: 600;
-    font-size: 16pt;
+    font-weight: 500;
+    font-size: 15pt;
     color: #8fbcbb;
 }
 
@@ -29,4 +29,5 @@ td.right {
     text-align: right;
     padding-left: 30px;
     padding-right: 10px;
+    font-weight: 600;
 }

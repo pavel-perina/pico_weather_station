@@ -5,7 +5,6 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 </head>
   <body>
-
     <table>
       <tr class="station" colspan="2">
         <td colspan="2">
@@ -35,7 +34,7 @@
         <td class="right">{{ humidity }} %</td>
       </tr>
       <tr>
-        <td class="left">Specific Humidity</td>
+        <td class="left">Specific humidity</td>
         <td class="right">{{ "{:.1f}".format(specific_humidity*1000) }} g/kg</td></tr>
       <tr>
         <td class="left">Pressure reduced to sea level</td>

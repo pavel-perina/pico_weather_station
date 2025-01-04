@@ -23,7 +23,8 @@ pin_led = Pin("LED", Pin.OUT)
 
 while True:
     # Time stuff (decrease for keyboard debounce handler in the future)
-    time.sleep_ms(50)
+    #time.sleep_ms(50)
+    machine.lightsleep(100)
     ctx.ticks_ms = time.ticks_ms()
 
     # Read sensors

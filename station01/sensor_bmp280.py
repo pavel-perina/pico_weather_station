@@ -105,13 +105,13 @@ class Bmp280:
         
     def on_tick(self, ctx:GlobalContext):
         if (self.awaiting_data_since_ticks > 0): 
-            if (ctx.ticks_ms - self.awaiting_data_since_ticks) >= 50:
+            if time.ticks_diff(ctx.ticks_ms, self.awaiting_data_since_ticks) >= 50:
                 buffer = ctx.i2c.readfrom(self.i2c_addr, 6)
                 (ctx.bmp280_temperature, ctx.bmp280_pressure) = self.calibration.decode_measurement(buffer)
                 self.awaiting_data_since_ticks  = 0
                 self.last_update_ticks          = ctx.ticks_ms 
         else:
-            if (ctx.ticks_ms - self.last_update_ticks) > 1000:
+            if time.ticks_diff(ctx.ticks_ms, self.last_update_ticks) > 1000:
                 ctx.i2c.writeto(self.i2c_addr, bytes([REG_PRESS_MSB]))
                 self.awaiting_data_since_ticks = ctx.ticks_ms
     

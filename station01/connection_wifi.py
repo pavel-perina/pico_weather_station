@@ -2,7 +2,7 @@ from global_context import GlobalContext
 import network
 import ntptime
 import time
-import urequests
+import requests
 from collections import deque
 from config import wifi_ssid, wifi_password, upload_server
 
@@ -78,7 +78,7 @@ class Connection:
     def on_tick(self, ctx:GlobalContext):
         if (self.state == STATE_IDLE):
             # Enqueue valid measurement on sampling interval
-            if (ctx.ticks_ms - self.last_measurement_ticks) > SAMPLING_INTERVAL:
+            if time.ticks_diff(ctx.ticks_ms, self.last_measurement_ticks) > SAMPLING_INTERVAL:
                 print("========= SAMPLING =============")
                 if (ctx.bmp280_pressure > 0):
                     self.enqueue_measurement(ctx)
@@ -91,20 +91,20 @@ class Connection:
                 return
             
         if (self.state == STATE_CONNECTING):
-            if (ctx.ticks_ms - self.connection_checked) > 250:
+            if time.ticks_diff(ctx.ticks_ms, self.connection_checked) > 250:
                 print("Checking connection")
                 if self.wlan.isconnected():
                     self.enter_state(ctx, STATE_UPLOADING)
                     try:
                         # Sync time if needed
-                        if (ctx.ticks_ms - self.last_ntp_sync) > 86_400_000 or self.last_ntp_sync == 0:
+                        if time.ticks_diff(ctx.ticks_ms, self.last_ntp_sync) > 86_400_000 or self.last_ntp_sync == 0:
                             self.sync_time(ctx)
                         headers = { "Content-Type": "application/json" }
                         while len(self.measurements) > 0: 
                             m:Measurement = self.measurements[0]
                             payload = '{{ "station_id": "sta01", "time": "{}", "temperature": {:.2f}, "pressure": {:.1f}, "humidity": {:.2f} }}' \
                                     .format(m.time, m.temperature , m.pressure, m.humidity)
-                            resp = urequests.post(upload_server, data=payload, headers=headers)
+                            resp = requests.post(upload_server, data=payload, headers=headers)
                             if resp.status_code == 200:
                                 print("Data posted successfully.")  
                             else:
@@ -119,7 +119,7 @@ class Connection:
                     self.disconnect(ctx)
                 else:
                     self.connection_checked = ctx.ticks_ms
-            if (ctx.ticks_ms - self.state_entered) > 15_000 and self.state == STATE_CONNECTING:
+            if time.ticks_diff(ctx.ticks_ms, self.state_entered) > 15_000 and self.state == STATE_CONNECTING:
                 print(f"Ticks: {ctx.ticks_ms}, state entered: {self.state_entered}")
                 print("Connection time out")
                 self.enter_state(ctx, STATE_IDLE)

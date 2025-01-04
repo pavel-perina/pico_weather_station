@@ -19,10 +19,11 @@ sht40   = Sht40()
 bmp280  = Bmp280(ctx)
 connection = Connection(ctx)
 connection.connect(ctx)
+pin_led = Pin("LED", Pin.OUT)
 
 while True:
-    # Time stuff
-    time.sleep_ms(5)
+    # Time stuff (decrease for keyboard debounce handler in the future)
+    time.sleep_ms(50)
     ctx.ticks_ms = time.ticks_ms()
 
     # Read sensors
@@ -43,3 +44,4 @@ while True:
     #print(f"Ticks: {ctx.ticks_ms}, Temp: {ctx.sht40_temperature}")
     
     connection.on_tick(ctx)
+    pin_led.toggle()

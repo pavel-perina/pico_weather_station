@@ -1,5 +1,6 @@
 from global_context import GlobalContext
 from font_table_full import font_data
+import time 
 
 def fb_clear(ctx:GlobalContext):
     # Zero out the byte array
@@ -25,7 +26,7 @@ class ScreenMain:
     def on_tick(self, ctx:GlobalContext):
         # Handle keyboard
         # Update screen
-        if (ctx.ticks_ms - self.last_update > 1000):
+        if time.ticks_diff(ctx.ticks_ms, self.last_update) > 1000:
             fb_clear(ctx)
             fb_write(ctx, 0, 0, "SHT40:")
             fb_write(ctx, 1, 0, f"Temp: {ctx.sht40_temperature:.2f}\xf8C")

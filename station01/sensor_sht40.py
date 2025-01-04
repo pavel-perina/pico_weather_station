@@ -15,7 +15,7 @@ class Sht40:
 
     def on_tick(self, ctx:GlobalContext):
         if (self.awaiting_data_since_ticks > 0): 
-            if (ctx.ticks_ms - self.awaiting_data_since_ticks) >= 10:
+            if time.ticks_diff(ctx.ticks_ms, self.awaiting_data_since_ticks) >= 10:
                 if self.is_baking:
                     self.last_baking = ctx.ticks_ms
                 buffer = ctx.i2c.readfrom(self.i2c_addr, 6)
@@ -30,7 +30,7 @@ class Sht40:
                 self.awaiting_data_since_ticks  = 0
                 self.last_update_ticks          = ctx.ticks_ms 
         else:
-            if (ctx.ticks_ms - self.last_update_ticks) > 1000:
+            if time.ticks_diff(ctx.ticks_ms, self.last_update_ticks) > 1000:
                 self.command = 0xfd if not self.is_baking else 0x39
                 ctx.i2c.writeto(self.i2c_addr, bytes([self.command]))
                 self.awaiting_data_since_ticks = ctx.ticks_ms

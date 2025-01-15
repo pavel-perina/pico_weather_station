@@ -15,7 +15,7 @@ STATE_CONNECTING = 1
 STATE_UPLOADING = 2
 
 QUEUE_MAX_LEN = 10
-QUEUE_FLUSH_LEN = 3
+QUEUE_FLUSH_LEN = 1#3
 
 # Data sampling interval in seconds
 SAMPLING_INTERVAL = 60_000
@@ -58,7 +58,9 @@ class Connection:
         self.state_entered = ctx.ticks_ms
         
     def disconnect(self, ctx:GlobalContext):
+        self.wlan.disconnect()
         self.wlan.active(False)
+        self.wlan.deinit()
         self.enter_state(ctx, STATE_IDLE)
 
     def upload_data(self, ctx):

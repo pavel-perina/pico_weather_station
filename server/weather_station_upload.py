@@ -91,11 +91,11 @@ def upload_data():
                 data[key] = value
 
             # Append the data to the log file
-            with open(f"log_{data["station_id"]}.txt", "a") as file:
+            with open(f"log_{data["station_id"]}.jsonl", "a") as file:
                 file.write(json.dumps(data) + "\n")
 
             # Last entry for dashboard
-            with open(f"last_{data["station_id"]}.txt", "w") as file:
+            with open(f"last_{data["station_id"]}.json", "w") as file:
                 file.write(json.dumps(data) + "\n")
                 
             logger.info(f"Received and logged data: {data}")

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask, request, jsonify
+from flask import Blueprint, request, jsonify
 import json
 from datetime import datetime, timezone
 from weather_calculations import get_derived_data
@@ -8,12 +8,12 @@ import logging
 import sys
 
 #########################################################################################################
-#   ____             __ _                       _   _             
-#  / ___|___  _ __  / _(_) __ _ _   _ _ __ __ _| |_(_) ___  _ __  
-# | |   / _ \| '_ \| |_| |/ _` | | | | '__/ _` | __| |/ _ \| '_ \ 
+#   ____             __ _                       _   _
+#  / ___|___  _ __  / _(_) __ _ _   _ _ __ __ _| |_(_) ___  _ __
+# | |   / _ \| '_ \| |_| |/ _` | | | | '__/ _` | __| |/ _ \| '_ \
 # | |__| (_) | | | |  _| | (_| | |_| | | | (_| | |_| | (_) | | | |
 #  \____\___/|_| |_|_| |_|\__, |\__,_|_|  \__,_|\__|_|\___/|_| |_|
-#                         |___/                                   
+#                         |___/
 
 LOG_FILE = "server_log.txt"
 
@@ -59,17 +59,18 @@ def createLogger() -> logging.Logger:
 logger = createLogger()
 
 #########################################################################################################
-#  ____                                              _   
-# / ___|  ___ _ ____   _____ _ __   _ __   __ _ _ __| |_ 
+#  ____                                              _
+# / ___|  ___ _ ____   _____ _ __   _ __   __ _ _ __| |_
 # \___ \ / _ \ '__\ \ / / _ \ '__| | '_ \ / _` | '__| __|
-#  ___) |  __/ |   \ V /  __/ |    | |_) | (_| | |  | |_ 
+#  ___) |  __/ |   \ V /  __/ |    | |_) | (_| | |  | |_
 # |____/ \___|_|    \_/ \___|_|    | .__/ \__,_|_|   \__|
-#                                  |_|                   
+#                                  |_|
 
-app = Flask(__name__)
-        
+# Define the blueprint
+bp_upload = Blueprint("upload", __name__)
+
 # Endpoint to receive and process data
-@app.route('/upload', methods=['POST'])
+@bp_upload.route('/upload', methods=['POST'])
 def upload_data():
     try:
         # Parse JSON data from the request
@@ -97,20 +98,12 @@ def upload_data():
             # Last entry for dashboard
             with open(f"last_{data["station_id"]}.json", "w") as file:
                 file.write(json.dumps(data) + "\n")
-                
+
             logger.info(f"Received and logged data: {data}")
             return jsonify({"status": "success"}), 200
         else:
             logger.error("Unknown station")
             return jsonify({"status": "error", "message": "Internal server error"}), 500
-        
     except Exception as e:
         logger.error(f"Error processing data: {e}")
         return jsonify({"status": "error", "message": "Internal server error"}), 500
-
-# Run the server
-if __name__ == '__main__':
-    logger.info("Running server")
-    app.run(host='0.0.0.0', port=5000)
-    logger.info("Stopping server")
-

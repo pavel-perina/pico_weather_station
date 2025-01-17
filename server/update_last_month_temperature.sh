@@ -5,7 +5,7 @@ CSV_FILE="/tmp/weather-last-month.csv"
 YEAR=$(date --date="$(date +'%Y-%m-%d') -1 day" +%Y)
 MONTH=$(date --date="$(date +'%Y-%m-%d') -1 day" +%m)
 #OUTPUT_FILE="/home/pavel/Pictures/weather_${YEAR}_${MONTH}_${STATION_ID}_temperature.png"
-OUTPUT_FILE="/home/pavel/dev-py/pico_weather_station/server/weather_${YEAR}_${MONTH}_${STATION_ID}_temperature.png"
+OUTPUT_FILE="/home/pavel/dev-py/pico_weather_station/server/assets/img/weather_${YEAR}_${MONTH}_${STATION_ID}_temperature.png"
 LAST_DAY=$(cal $MONTH $YEAR | awk 'NF {DAYS = $NF}; END {print DAYS}')
 
 # TODO: add to database as a view
@@ -51,4 +51,3 @@ fi
 echo "HERE"
 gnuplot -e "$GNUPLOT_SCRIPT"
 echo "$GNUPLOT_SCRIPT" > .gnuplot
-

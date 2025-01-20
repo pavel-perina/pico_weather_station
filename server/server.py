@@ -2,7 +2,8 @@
 
 from flask import Flask
 from server_index import bp_index
-from server_upload import bp_upload
+#from server_upload_to_jsonl import bp_upload
+from server_upload_to_psql import bp_upload
 
 app = Flask(__name__, static_folder="assets", static_url_path="/assets")
 

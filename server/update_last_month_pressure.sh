@@ -34,9 +34,10 @@ set format x '%d';
 set grid;
 set output "${OUTPUT_FILE}";
 set ylabel "Pressure (hPa)";
+set xlabel "Day";
 set xrange [ "${YEAR}-${MONTH}-01 00:00:00" : "${YEAR}-${MONTH}-${LAST_DAY} 23:59:59" ];
 set xtics "${YEAR}-${MONTH}-01 00:00:00", 86400;
-set title 'Daily temperatures for station: ${STATION_ID}, month ${YEAR}-${MONTH}';
+set title 'Pressure for station: ${STATION_ID}, month ${YEAR}-${MONTH}';
 plot "${CSV_FILE}" using 1:2 with lines title "Pressure at station" lc rgb "#a3be8c",
  "${CSV_FILE}" using 1:3 with lines title "Pressure at sea level" lc rgb "#5e81ac";
 EOF

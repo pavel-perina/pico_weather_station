@@ -27,6 +27,8 @@ set mxtics 4;
 set format x '%H';
 set format x2 '%m-%d';
 set output "${OUTPUT_FILE_PREFIX}pressure.png";
+set xlabel "Hour";
+set x2label "Date";
 set ylabel "Pressure (hPa)";
 set title 'Recent pressure for station: ${STATION_ID}';
 plot "${CSV_FILE}" using 2:(\$5*0.01) with lines title "Pressure at station" lc rgb "#a3be8c",

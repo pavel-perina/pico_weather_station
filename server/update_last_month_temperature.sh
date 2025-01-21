@@ -32,6 +32,7 @@ set datafile separator ',';
 set grid ;
 set xtics 1;
 set xrange [0.5:${LAST_DAY}.5];
+set xlabel "Day";
 set output "${OUTPUT_FILE}";
 set ylabel "Temperature (°C)";
 set title 'Daily temperatures for station: ${STATION_ID}, month ${YEAR}-${MONTH}';

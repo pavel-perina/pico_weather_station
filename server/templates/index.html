@@ -52,6 +52,18 @@
         <td class="right">{{ "{:.1f}".format(pressure*0.01) }} hPa</td>
       </tr>
     </table>
+    <br />
+    <p>
+      <img src="{{ url_for('static', filename='img/weather_sta01_recent_temperature.png') }}" width="800" height="480" />
+    </p><p>
+      <img src="{{ url_for('static', filename='img/weather_sta01_recent_pressure.png') }}" width="800" height="480" />
+    </p><p>
+      <img src="{{ url_for('static', filename='img/weather_sta01_recent_humidity.png') }}" width="800" height="480" />
+    </p><p>
+      <img src="{{ url_for('static', filename='img/weather_2025_01_sta01_temperature.png') }}" width="800" height="480" />
+    </p><p>
+      <img src="{{ url_for('static', filename='img/weather_2025_01_sta01_pressure.png') }}" width="800" height="480" />
+    </p>
   </body>
 </html>
 

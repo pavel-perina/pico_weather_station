@@ -52,7 +52,7 @@ if [ ! -s "$CSV_FILE" ]; then
   echo "Error: CSV file is empty or not created."
   exit 1
 fi
-echo "HERE"
+
 gnuplot -e "$GNUPLOT_SCRIPT"
-echo "$GNUPLOT_SCRIPT" > .gnuplot
+#echo "$GNUPLOT_SCRIPT" > .gnuplot
 

@@ -1,0 +1,11 @@
+[Unit]
+Description="Weather station periodic timer"
+
+[Timer]
+OnCalendar=*:0/10
+AccuracySec=60s
+Persistent=false
+
+[Install]
+WantedBy=timers.target
+

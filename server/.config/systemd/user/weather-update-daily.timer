@@ -1,0 +1,11 @@
+[Unit]
+Description="Weather station daily timer"
+
+[Timer]
+OnCalendar=*-*-* 00:00:20
+AccuracySec=300s
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+

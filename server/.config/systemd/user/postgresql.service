@@ -1,0 +1,14 @@
+[Unit]
+Description=PostgreSQL database server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/pavel/postgre-data
+ExecStart=/usr/bin/postgres -D /home/pavel/postgre-data
+ExecStop=/usr/bin/pg_ctl _D /home/pavel/postgre-data stop
+Restart=always
+
+[Install]
+WantedBy=default.target
+

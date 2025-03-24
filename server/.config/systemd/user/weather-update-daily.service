@@ -1,0 +1,10 @@
+[Unit]
+Description="Weather station daily service"
+After=postgresql.service
+
+[Service]
+Type=oneshot
+ExecStart=/home/pavel/dev-py/pico_weather_station/server/update_last_month_temperature.sh
+ExecStart=/home/pavel/dev-py/pico_weather_station/server/update_last_month_pressure.sh
+ExecStart=/bin/sh -c 'pg_dump -h /home/pavel/postgre-sockets -d weather_data | zstd -19 > /home/pavel/backup/weather_data-$(date +%%Y-%%m-%%d).sql.zstd'
+WorkingDirectory=/home/pavel/dev-py/pico_weather_station/server/

@@ -17,8 +17,8 @@ STATE_UPLOADING = 2
 QUEUE_MAX_LEN = 10
 QUEUE_FLUSH_LEN = 1#3
 
-# Data sampling interval in seconds
-SAMPLING_INTERVAL = 60_000
+# Data sampling interval in miliseconds (5 minutes)
+SAMPLING_INTERVAL = 5 * 60_000
 
 
 class Measurement:

@@ -44,4 +44,5 @@ while True:
     #print(f"Ticks: {ctx.ticks_ms}, Temp: {ctx.sht40_temperature}")
     
     connection.on_tick(ctx)
-    pin_led.toggle()
+    # Blinks LED as heartbeat - gets annoying, only for debug
+    #pin_led.toggle()

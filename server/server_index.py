@@ -4,7 +4,7 @@ from datetime import datetime
 
 bp_index =Blueprint("index",__name__)
 
-JSON_FILE = "last_sta01.txt"
+JSON_FILE = "last_sta01.json"
 
 @bp_index.route("/")
 def index_page():
@@ -17,7 +17,5 @@ def index_page():
     except (IOError, ValueError):
         return jsonify({"error": "File not found"}), 500
 
-    # A simple HTML template to show data    
-
+    # A simple HTML template to show data
     return render_template("index.html", **data)
-

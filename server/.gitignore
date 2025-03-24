@@ -1,4 +1,6 @@
 *.txt
+*.json
+*.jsonl
 nohup.out
-
+.gnuplot
 

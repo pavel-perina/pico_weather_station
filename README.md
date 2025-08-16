@@ -18,7 +18,12 @@ Raspberry Pico W Weather Station project(s)
 ## server/
 
 Contains server. As of 2024-12-30 it basically appends any received json
-data to a file. 
+data to a file.
+
+## server/.config
+
+Contains systemd file to run periodic timers. Must be modified according
+to your system (paths including home directory)
 
 ## snippets/
 

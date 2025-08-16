@@ -36,7 +36,7 @@ set xlabel "Day";
 set output "${OUTPUT_FILE}";
 set ylabel "Temperature (°C)";
 set title 'Daily temperatures for station: ${STATION_ID}, month ${YEAR}-${MONTH}';
-plot "${CSV_FILE}" using 1:((\$2+\$3)/2):(0.4):((\$3-\$2)/2) with boxxyerrorbars title "Temperature Range" lc rgb "#d08770" fs solid 0.5;
+plot "${CSV_FILE}" using 1:((\$3+\$4)/2):(0.4):((\$4-\$3)/2) with boxxyerrorbars title "Temperature Range" lc rgb "#d08770" fs solid 0.5;
 EOF
 )
 # set xrange [1:${LAST_DAY}];

@@ -100,7 +100,7 @@ class Scd41:
         if time.ticks_diff(ctx.ticks_ms, self.last_update_ticks) > 6000:
             result = scd41_measure(ctx.i2c)
             if result != None:
-                [self.ctx.scd41_temperature, self.ctx.scd41_humidity, self.ctx.scd41_co2 ] = result
+                [ctx.scd41_temperature, ctx.scd41_humidity, ctx.scd41_co2 ] = result
             self.last_update_ticks = ctx.ticks_ms
 
 # Make this runnable

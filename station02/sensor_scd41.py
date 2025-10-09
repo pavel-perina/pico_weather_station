@@ -23,6 +23,7 @@ def crc8(data):
                 crc = crc << 1
     return crc & 0xFF
 
+
 def decode_measurement(buffer):
     # Verify CRCs (every 2 bytes followed by 1 CRC byte)
     if crc8(buffer[0:2]) != buffer[2]:
@@ -44,6 +45,7 @@ def decode_measurement(buffer):
     humidity = humidity * 0.001
     return [temperature, humidity, co2ppm]
 
+
 def scd41_init(i2c):
     # Stop any periodic measurement first
     try:
@@ -55,7 +57,6 @@ def scd41_init(i2c):
     # Start periodic measurement
     i2c.writeto(SCD41_ADDR, bytes([0x21, 0xB1]))
     time.sleep_ms(1000)
-
 
 
 def scd41_measure(i2c):
@@ -81,11 +82,7 @@ def scd41_measure(i2c):
     time.sleep_ms(10)
     buffer = i2c.readfrom(SCD41_ADDR, 9)
 
-    #ormatted_buffer = ' '.join([f'{b:02x}' for b in buffer])
-    #print(f"Buffer (hex): {formatted_buffer}")
     return decode_measurement(buffer)
-
-
 
 
 class Scd41:
@@ -102,6 +99,7 @@ class Scd41:
             if result != None:
                 [ctx.scd41_temperature, ctx.scd41_humidity, ctx.scd41_co2 ] = result
             self.last_update_ticks = ctx.ticks_ms
+
 
 # Make this runnable
 if __name__ == "__main__":

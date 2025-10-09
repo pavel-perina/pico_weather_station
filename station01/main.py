@@ -3,20 +3,24 @@ import time
 from global_context import GlobalContext
 from sensor_sht40 import Sht40
 from sensor_bmp280 import Bmp280
-from display_pcd8544 import Display
+from display_ssd1306 import Display
 from screen_main import ScreenMain
 from connection_wifi import Connection
 #from screen_menu import 
 
-ctx = GlobalContext(I2C(0, sda=Pin(0), scl=Pin(1)), 
-                    SPI(1, baudrate=1000000, mosi=Pin(11), sck=Pin(10)),
+print("=== PROGRAM START ===")
+ctx = GlobalContext(I2C(0, sda=Pin(0), scl=Pin(1)),                     
                     time.ticks_ms()
                     )
-
+time.sleep_ms(200)
 display = Display(ctx)
+time.sleep_ms(50)
 screen_main = ScreenMain(ctx)
+time.sleep_ms(50)
 sht40   = Sht40()
+time.sleep_ms(50)
 bmp280  = Bmp280(ctx)
+time.sleep_ms(50)
 connection = Connection(ctx)
 connection.connect(ctx)
 pin_led = Pin("LED", Pin.OUT)

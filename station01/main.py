@@ -6,10 +6,15 @@ from sensor_bmp280 import Bmp280
 from display_ssd1306 import Display
 from screen_main import ScreenMain
 from connection_wifi import Connection
-#from screen_menu import 
+#from screen_menu import
+
+# Pinout is GP0, GP1 (left 1,2) -> sensors i2c
+#           GP2, GP3 (left 4,5) -> display i2c
+#           GND, 3V3_out (rigt 3, 5) -> power
 
 print("=== PROGRAM START ===")
-ctx = GlobalContext(I2C(0, sda=Pin(0), scl=Pin(1)),                     
+ctx = GlobalContext(I2C(0, sda=Pin(0), scl=Pin(1)),
+                    I2C(1, sda=Pin(2), scl=Pin(3)),                 
                     time.ticks_ms()
                     )
 time.sleep_ms(200)

@@ -4,6 +4,7 @@
 
 from machine import I2C, Pin
 from global_context import GlobalContext
+import time
 
 SSD1306_ADDR = 0x3C
 
@@ -42,22 +43,23 @@ def reset_cursor(i2c):
 class Display:
 
     def __init__(self, ctx):
-        display_init(ctx.i2c)
+        self.i2c = ctx.i2c_disp
+        display_init(self.i2c)
 
     def on_tick(self, ctx):
         if ctx.framebuffer_dirty:
-            reset_cursor(ctx.i2c)
+            reset_cursor(self.i2c)
             chunk_size = 32
             for i in range(0, len(ctx.framebuffer), chunk_size):
                 chunk = ctx.framebuffer[i:i+chunk_size]
-                ctx.i2c.writeto(SSD1306_ADDR, bytes([0x40]) + chunk)
+                self.i2c.writeto(SSD1306_ADDR, bytes([0x40]) + chunk)
             ctx.framebuffer_dirty = False
 
 if __name__ == "__main__":
     print("Running as standalone script")
     led = Pin("LED", Pin.OUT)
     led.toggle()
-    i2c = I2C(0, sda=Pin(0), scl=Pin(1))
+    i2c = I2C(1, sda=Pin(2), scl=Pin(3))
     display_init(i2c)
     reset_cursor(i2c)
 

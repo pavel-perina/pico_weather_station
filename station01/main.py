@@ -3,7 +3,7 @@ import time
 from global_context import GlobalContext
 from sensor_sht40 import Sht40
 from sensor_bmp280 import Bmp280
-from display_ssd1306 import Display
+from display_ssd1315 import Display
 from screen_main import ScreenMain
 from connection_wifi import Connection
 #from screen_menu import

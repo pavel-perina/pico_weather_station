@@ -131,3 +131,25 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             break
     print("Done.")
+
+# Example output
+#MicroPython v1.26.1 on 2025-09-11; Raspberry Pi Pico 2 W with RP2350
+#Type "help()" for more information or .help for custom vREPL commands.
+#
+#>>> 
+#Running as standalone script
+#Verifying sample data from datasheet (25/37/500)
+#Temp: 25.00C, Hum: 37.00%, CO2:500ppm
+#
+#Initializing measurement
+#Measurement loop (expected data every 5s)
+#No data ready
+#No data ready
+#No data ready
+#Temp: 26.28C, Hum: 47.33%, CO2:881ppm
+#No data ready
+#No data ready
+#No data ready
+#No data ready
+#Temp: 25.89C, Hum: 48.09%, CO2:867ppm
+#No data ready

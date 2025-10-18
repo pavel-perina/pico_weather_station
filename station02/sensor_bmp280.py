@@ -124,7 +124,3 @@ if __name__ == "__main__":
     calib.from_bytes(calib_data)
     (temp, pressure) = calib.decode_measurement(meas_data)
     print(f"Temp: {temp}, Pressure: {pressure}")
-    
-else:
-    # This block will run if the file is imported as a module
-    from machine import I2C

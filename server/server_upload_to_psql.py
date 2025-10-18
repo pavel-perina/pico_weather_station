@@ -132,9 +132,20 @@ def upload_data():
 
             logger.info(f"Received and logged data: {data}")
             return jsonify({"status": "success"}), 200
+        elif "station_id" in data and data["station_id"] != "":
+            # Unknown station, fallback to json lines
+            print("Unknown station")
+            with open(f"last_{data["station_id"]}.json", "w") as file:
+                file.write(json.dumps(data) + "\n")
+                        # Append the data to the log file
+            with open(f"log_{data["station_id"]}.jsonl", "a") as file:
+                file.write(json.dumps(data) + "\n")
+            return jsonify({"status": "success"}), 200
         else:
             logger.error("Unknown station")
             return jsonify({"status": "error", "message": "Internal server error"}), 500
     except Exception as e:
+        
+        
         logger.error(f"Error processing data: {e}")
         return jsonify({"status": "error", "message": "Internal server error"}), 500

@@ -44,7 +44,7 @@ class ScreenMain:
             fb.fill(0)
             #fb.rect(0, 0, 127, rh-1, 1, True)
             #fb.text(get_time_str(), 4, 0, 0)
-            fb.text(get_time_str(), 8, 0, 0)
+            fb.text(get_time_str(), 8, 0)
             fb.text("SHT40:", 0, rh)
             fb.text(f"Temp: {ctx.sht40_temperature:.2f} C", 16, 2*rh)
             fb.text(f"RH:   {ctx.sht40_humidity:.2f} %", 16, 3*rh)

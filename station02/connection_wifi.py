@@ -24,9 +24,9 @@ SAMPLING_INTERVAL = 5 * 60_000
 class Measurement:
     def __init__(self, ctx:GlobalContext):
         self.time = get_time_str()
-        self.temperature = ctx.scd41_temperature
+        self.temperature = ctx.sht40_temperature
         self.humidity = ctx.scd41_humidity
-        self.pressure = ctx.bmp280_pressure
+        #self.pressure = ctx.bmp280_pressure
         self.co2 = ctx.scd41_co2
 
 class Connection:
@@ -83,7 +83,7 @@ class Connection:
             # Enqueue valid measurement on sampling interval
             if time.ticks_diff(ctx.ticks_ms, self.last_measurement_ticks) > SAMPLING_INTERVAL:
                 print("========= SAMPLING =============")
-                if (ctx.bmp280_pressure > 0):
+                if (ctx.scd41_humidity > 0):
                     self.enqueue_measurement(ctx)
                 self.last_measurement_ticks = ctx.ticks_ms
 
@@ -105,8 +105,8 @@ class Connection:
                         headers = { "Content-Type": "application/json" }
                         while len(self.measurements) > 0: 
                             m:Measurement = self.measurements[0]
-                            payload = '{{ "station_id": "{station_id}", "time": "{}", "temperature": {:.2f}, "pressure": {:.1f}, "humidity": {:.2f}, "co2": {:d} }}' \
-                                    .format(m.time, m.temperature , m.pressure, m.humidity, m.co2)
+                            payload = '{{ "station_id": "{}", "time": "{}", "temperature": {:.2f}, "humidity": {:.2f}, "co2": {:d} }}' \
+                                    .format(station_id, m.time, m.temperature , m.humidity, m.co2)
                             resp = requests.post(upload_server, data=payload, headers=headers)
                             if resp.status_code == 200:
                                 print("Data posted successfully.")  

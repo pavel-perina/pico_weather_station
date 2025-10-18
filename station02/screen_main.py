@@ -34,11 +34,11 @@ class ScreenMain:
         if time.ticks_diff(ctx.ticks_ms, self.last_update) > 1000:
             fb_clear(ctx)
             tm = time.localtime()
-            fb_write(ctx, 0, 0, f"Temp: {ctx.scd41_temperature:.2f}\xf8C")
-            fb_write(ctx, 1, 0, f"RH:   {ctx.scd41_humidity:.2f} %")
-            fb_write(ctx, 2, 0, f"CO2:  {ctx.scd41_co2} ppm")
-            fb_write(ctx, 3, 0, "--------")
-            fb_write(ctx, 4, 0, f"Temp: {ctx.bmp280_temperature:.2f}\xf8C")
-            fb_write(ctx, 5, 0, f"{ctx.bmp280_pressure*0.01:.2f} hPa")
+            fb_write(ctx, 0, 0, f"{tm[3]:02d}:{tm[4]:02d}:{tm[5]:02d} UTC")
+            fb_write(ctx, 1, 0, f"Temp: {ctx.scd41_temperature:.2f}\xf8C")
+            fb_write(ctx, 2, 0, f"RH:   {ctx.scd41_humidity:.2f} %")
+            fb_write(ctx, 3, 0, f"CO2:  {ctx.scd41_co2} ppm")
+            fb_write(ctx, 4, 0, f"Temp: {ctx.sht40_temperature:.2f}\xf8C")
+            fb_write(ctx, 5, 0, f"   RH:{ctx.sht40_humidity:.2f} %")
             ctx.framebuffer_dirty = True
             self.last_update = ctx.ticks_ms

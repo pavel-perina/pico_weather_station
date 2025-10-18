@@ -1,9 +1,9 @@
 from machine import I2C, SPI, Pin
 import time
 from global_context import GlobalContext
-#from sensor_sht40 import Sht40
+from sensor_sht40 import Sht40
 from sensor_scd41 import Scd41
-from sensor_bmp280 import Bmp280
+#from sensor_bmp280 import Bmp280
 from display_pcd8544 import Display
 #from display_ssd1306 import Display
 from screen_main import ScreenMain
@@ -17,9 +17,9 @@ ctx = GlobalContext(I2C(0, sda=Pin(0), scl=Pin(1)),
 
 display = Display(ctx)
 screen_main = ScreenMain(ctx)
-#sht40   = Sht40()
+sht40   = Sht40()
 scd41   = Scd41(ctx)
-bmp280  = Bmp280(ctx)
+#bmp280  = Bmp280(ctx)
 connection = Connection(ctx)
 connection.connect(ctx)
 pin_led = Pin("LED", Pin.OUT)
@@ -30,9 +30,9 @@ while True:
     ctx.ticks_ms = time.ticks_ms()
 
     # Read sensors
-    #sht40.on_tick(ctx)
+    sht40.on_tick(ctx)
     scd41.on_tick(ctx)
-    bmp280.on_tick(ctx)
+    #bmp280.on_tick(ctx)
     #rtc.on_tick(ctx)
 
     # Translate keyboard buttons to events

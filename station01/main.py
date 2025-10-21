@@ -13,8 +13,9 @@ from connection_wifi import Connection
 #           GND, 3V3_out (rigt 3, 5) -> power
 
 print("=== PROGRAM START ===")
-ctx = GlobalContext(I2C(0, sda=Pin(0), scl=Pin(1)),
-                    I2C(1, sda=Pin(2), scl=Pin(3)),                 
+i2c0 = I2C(0, sda=Pin(0), scl=Pin(1))
+ctx = GlobalContext(i2c0,
+                    i2c0,                 
                     time.ticks_ms()
                     )
 time.sleep_ms(200)

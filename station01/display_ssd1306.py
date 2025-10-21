@@ -64,7 +64,7 @@ if __name__ == "__main__":
     print("Running as standalone script")
     led = Pin("LED", Pin.OUT)
     led.toggle()
-    i2c = I2C(1, sda=Pin(2), scl=Pin(3))
+    i2c = I2C(0, sda=Pin(0), scl=Pin(1))
     display_init(i2c)
     reset_cursor(i2c)
 

@@ -1,17 +1,16 @@
-from machine import I2C, SPI, Pin
+from machine import I2C, Pin, SoftI2C
 import time
 from global_context import GlobalContext
 from sensor_sht40 import Sht40
 from sensor_scd41 import Scd41
 #from sensor_bmp280 import Bmp280
-from display_pcd8544 import Display
+from display_st7567 import Display
 #from display_ssd1306 import Display
 from screen_main import ScreenMain
 from connection_wifi import Connection
 #from screen_menu import 
 
-ctx = GlobalContext(I2C(0, sda=Pin(0), scl=Pin(1)), 
-                    SPI(1, baudrate=1000000, mosi=Pin(11), sck=Pin(10)),
+ctx = GlobalContext(SoftI2C(sda=Pin(16), scl=Pin(17)),
                     time.ticks_ms()
                     )
 

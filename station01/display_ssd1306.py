@@ -27,8 +27,8 @@ def display_init(i2c):
         0xC0,			# Set COM Output Scan Direction
         0xDA, 0x12,		# Set COM Pins Hardware Configuration - 128x32:0x02, 128x64:0x12
         0x81, 0x3F,		# Set contrast control register
-        0xD9, 0x22,		# Set pre-charge period (0x22 or 0xF1)
-        0xDB, 0x20,		# Set Vcomh Deselect Level - 0x00: 0.65 x VCC, 0x20: 0.77 x VCC (RESET), 0x30: 0.83 x VCC
+        0xD9, 0xF1,		# Set pre-charge period (0x22 or 0xF1)
+        0xDB, 0x30,		# Set Vcomh Deselect Level - 0x00: 0.65 x VCC, 0x20: 0.77 x VCC (RESET), 0x30: 0.83 x VCC
         0xA4,			# Entire Display ON (resume) - output RAM to display
         0xA6,			# Set Normal/Inverse Display mode. A6=Normal; A7=Inverse
         0x2E,			# Deactivate Scroll command

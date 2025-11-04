@@ -3,7 +3,7 @@ import time
 from global_context import GlobalContext
 from sensor_sht40 import Sht40
 from sensor_bmp280 import Bmp280
-from display_ssd1306 import Display
+#from display_ssd1306 import Display # cannot run stably
 from screen_main import ScreenMain
 from connection_wifi import Connection
 #from screen_menu import
@@ -15,11 +15,11 @@ from connection_wifi import Connection
 print("=== PROGRAM START ===")
 i2c0 = I2C(0, sda=Pin(0), scl=Pin(1))
 ctx = GlobalContext(i2c0,
-                    i2c0,                 
+                    i2c0,
                     time.ticks_ms()
                     )
 time.sleep_ms(200)
-display = Display(ctx)
+#display = Display(ctx)
 time.sleep_ms(50)
 screen_main = ScreenMain(ctx)
 time.sleep_ms(50)
@@ -50,7 +50,7 @@ while True:
         screen_main.on_tick(ctx)
 
     # Update display from framebuffer if dirty
-    display.on_tick(ctx) 
+    # display.on_tick(ctx)
     #print(f"Ticks: {ctx.ticks_ms}, Temp: {ctx.sht40_temperature}")
     
     connection.on_tick(ctx)

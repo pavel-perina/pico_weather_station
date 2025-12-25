@@ -111,12 +111,16 @@ if __name__ == "__main__":
     print(f"Temp: {t:.2f}C, Hum: {h:.2f}%, CO2:{c}ppm\n")
 
 
-    from machine import Pin, I2C
+    from machine import Pin, I2C, SoftI2C
+
     led = Pin("LED", Pin.OUT)
     led.toggle()
-    i2c = I2C(0, sda=Pin(0), scl=Pin(1))
-    #print("I2C Scan (looking for 98)")
-    #i2c.scan()
+    i2c = SoftI2C( sda=Pin(16), scl=Pin(17), freq=100_000)
+    #i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=100_000)
+    print("I2C Scan (looking for 98)")
+    print(i2c.scan())
+    time.sleep(1)
+
     print("Initializing measurement")
     scd41_init(i2c)
     print("Measurement loop (expected data every 5s)")

@@ -1,32 +1,48 @@
 from datetime import datetime, timedelta
 import math
-import pandas as pd
+import struct
 
-def excel_date_to_julian_day(excel_date, timezone_offset):
+EXCEL_EPOCH = datetime(1899, 12, 30)     # Excel epoch (1900-01-01) with the 1900 leap year bug correction
+J2000_EPOCH = 2451545.0                  # Noon 2000-01-01T12:00Z
+DAYS_PER_CENTURY = 36525.0
+
+def excel_date_to_julian_day(excel_date:float, timezone_offset:float) -> float:
     # Excel's date system starts at 1900-01-01 (Excel day 1)
     # But Excel incorrectly assumes 1900 is a leap year, so day 60 is 1900-02-29 (which doesn't exist)
     # So we adjust for this bug (comes from Lotus-1-2-3)
-    excel_epoch = datetime(1899, 12, 30)
     delta = timedelta(days=excel_date)  # Subtract 2 to correct for Excel's 1900 leap year bug
-    date = excel_epoch + delta
+    date = EXCEL_EPOCH + delta
 
     # Calculate Julian Day
-    # Excel formula: JD = DATE + 2415018.5 + DAY_FRACTION - TIMEZONE/24
+    # Excel formula: JD = EXCEL_DATE + 2415018.5 + DAY_FRACTION - TIMEZONE/24
     # Here, DAY_FRACTION is 0.5 for noon, but you can adjust as needed
+    # Magic constant is Julian date of 1899-12-30T00:00Z
     jd = excel_date + 2415018.5 - timezone_offset / 24
     return jd
 
-def date_to_excel_serial_date(date):
-    # Excel epoch (1900-01-01) with the 1900 leap year bug correction
-    excel_epoch = datetime(1899, 12, 30)
-    delta = date - excel_epoch
+def date_to_excel_serial_date(date: datetime) -> float:
+    delta = date - EXCEL_EPOCH
     return delta.days
 
-def julian_day(date, timezone_offset):
+def date_to_julian_day(date, timezone_offset):
     # https://en.wikipedia.org/wiki/Julian_day#History yes, we have year 6738 in 2025
     excel_date = date_to_excel_serial_date(date)
     jd = excel_date_to_julian_day(excel_date, timezone_offset)    
     return jd
+
+def date_to_julian_century(date: datetime,
+                           timezone_offset: float, 
+                           time_fraction: float = 0.5) -> float:
+    """
+    Convert date to Julian centuries since J2000.0 epoch
+    
+    Args:
+        date: Date to convert
+        timezone_offset: UTC offset in hours
+        time_fraction: Time of day as fraction (0.5 = noon)
+    """
+    jd = date_to_julian_day(date, timezone_offset)
+    return (jd + time_fraction - J2000_EPOCH) / DAYS_PER_CENTURY
 
 def fraction_to_time(fraction):
     hours   = int(fraction * 24)
@@ -58,7 +74,7 @@ def precalc(julian_century):
     sun_true_anom = geom_mean_anom_sun + sun_eq_of_ctr
 
     # Vzdálenost slunce od Země (O)
-    sun_rad_vector = (1.000001018 * (1 - eccent_earth_orbit**2)) / (1 + eccent_earth_orbit * math.cos(math.radians(sun_true_anom)))
+    # sun_rad_vector = (1.000001018 * (1 - eccent_earth_orbit**2)) / (1 + eccent_earth_orbit * math.cos(math.radians(sun_true_anom)))
 
     # Zdánlivá délka slunce (P)
     sun_app_long = sun_true_long - 0.00569 - 0.00478 * math.sin(math.radians(125.04 - 1934.136 * julian_century))
@@ -135,13 +151,17 @@ start_date = datetime(2025, 12, 1)
 end_date   = datetime(2025, 12, 31)
 
 current_date = start_date
-julian_century      = (julian_day(start_date, timezone_offset) + time_past_midnight - 2451545)/36525
+#julian_century      = (julian_day(start_date, timezone_offset) + time_past_midnight - 2451545)/36525
+julian_century = date_to_julian_century(start_date, timezone_offset, time_past_midnight)
 array = []
 while current_date <= end_date:
     sun_declin, eq_of_time = precalc(julian_century)
     array.append((sun_declin, eq_of_time))
     current_date   += timedelta(days=1)
-    julian_century += 1/36525
+    julian_century += 1/DAYS_PER_CENTURY
+
+print("| Date | Sunrise | Noon | Sunset |")
+print("|------|---------|------|--------|")
 
 for index, (sun_declin, eq_of_time) in enumerate(array):
     sun_declin, eq_of_time = array[index]
@@ -156,31 +176,32 @@ for index, (sun_declin, eq_of_time) in enumerate(array):
 
     # Čas západu slunce (Z)
     sunset_time = solar_noon + ha_sunrise * 4 / 1440
-    print(f"{current_date:%Y-%m-%d}\t{fraction_to_time(sunrise_time)}\t{fraction_to_time(solar_noon)}\t{fraction_to_time(sunset_time)}")
+    print(f"| {current_date:%Y-%m-%d} | {fraction_to_time(sunrise_time)} | {fraction_to_time(solar_noon)} | {fraction_to_time(sunset_time)} |")
 
 
-"""
-Calculate solar azimuth and elevation at given time
 
-Parameters:
-- latitude: observer latitude (degrees)
-- doy: day of year
-- solar_hour: time in solar hours (0-24)
-
-Returns:
-- (azimuth, elevation) in degrees
-- azimuth: 0° = North, 90° = East, 180° = South, 270° = West
-- elevation: angle above horizon (negative = below horizon)
-"""
 def solar_position(latitude, sun_declin, eq_of_time, local_hour):
-    
+    """
+    Calculate solar azimuth and elevation at given time
+
+    Parameters:
+    - latitude: observer latitude (degrees)
+    - doy: day of year
+    - solar_hour: time in solar hours (0-24)
+
+    Returns:
+    - (azimuth, elevation) in degrees
+    - azimuth: 0° = North, 90° = East, 180° = South, 270° = West
+    - elevation: angle above horizon (negative = below horizon)
+    """
+
     # Hour angle from solar noon (15° per hour)
     solar_hour = local_hour + longitude/15.0 - timezone_offset
     hour_angle = 15.0 * (solar_hour - 12.0 + eq_of_time/60.0)
     
     lat_rad = math.radians(latitude)
     dec_rad = math.radians(sun_declin)
-    h_rad = math.radians(hour_angle)
+    h_rad   = math.radians(hour_angle)
     
     # Solar elevation (altitude)
     sin_elev = math.sin(lat_rad) * math.sin(dec_rad) + \
@@ -205,8 +226,28 @@ def solar_position(latitude, sun_declin, eq_of_time, local_hour):
     return (azimuth, elevation)
 
 
-julian_century = (julian_day(datetime(2025, 12, 24), timezone_offset) + time_past_midnight - 2451545)/36525
+date_to_julian_century(datetime(2025, 12, 24), timezone_offset, time_past_midnight)
+print("| Hour | Azimuth | Elevation |")
+print("|-----:|--------:|----------:|")
 for hour in range (0, 23):
     sun_declin, eq_of_time = precalc(julian_century)
     azimuth, elevation = solar_position(latitude, sun_declin, eq_of_time, hour)
-    print(f"{hour:02d}\t{azimuth}\t{elevation}")
+    print(f"| {hour:d} | {azimuth:6.2f} | {elevation:6.2f} |")
+
+start_date = datetime(2025, 12, 1)
+end_date   = datetime(2027, 12, 31)
+current_date = start_date
+#julian_century      = (julian_day(start_date, timezone_offset) + time_past_midnight - 2451545)/36525
+julian_century = date_to_julian_century(start_date, timezone_offset, time_past_midnight)
+array = []
+while current_date <= end_date:
+    sun_declin, eq_of_time = precalc(julian_century)
+    array.append((sun_declin, eq_of_time))
+    current_date   += timedelta(days=1)
+    julian_century += 1/DAYS_PER_CENTURY
+
+# Write binary
+with open('sun_data.bin', 'wb') as f:
+    f.write(struct.pack('H', len(array)))  # number of entries
+    for decl, eot in array:
+        f.write(struct.pack('ff', decl, eot))  # two floats
